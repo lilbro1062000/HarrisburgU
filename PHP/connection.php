@@ -1,11 +1,16 @@
 <?php 
 
 //aws DB stuff 
-define("DB_SERVER", "HarrisburgU.db.5488878.hostedresource.com");
-define("DB_USER", "HarrisburgU");
-define("DB_PASS", "csL4KAcOgl#wC1");
-define("DB_Name", "HarrisburgU");
+// define("DB_SERVER", "HarrisburgU.db.5488878.hostedresource.com");
+// define("DB_USER", "HarrisburgU");
+// define("DB_PASS", "csL4KAcOgl#wC1");
+// define("DB_Name", "HarrisburgU");
 
+
+define("DB_SERVER", "working.crxxqouohlnb.us-east-1.rds.amazonaws.com");
+define("DB_USER", "TMSprdUser");
+define("DB_PASS", "2bornot2b");
+define("DB_Name", "TMSdevDB");
  
 
 //first i need database connection information and a database for case storage 
