@@ -1,0 +1,30 @@
+#Header
+{
+	border-width: 20px;
+	border-color: black;
+	border-style:solid;
+	top: 90px;
+	height: 90px;
+}
+#Mid
+{
+	border-width: 20px;
+	border-color: red;
+	border-style:solid;
+	
+}
+#footer
+{
+	border-width: 20px;
+	border-color: orange;
+	border-style:solid;
+	bottom: 90px;
+}
+#SubmitButton
+{
+	text-align: right;
+}
+.factor
+{
+	width:800px; 
+}
