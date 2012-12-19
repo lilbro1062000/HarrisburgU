@@ -64,10 +64,12 @@ GROUP BY  `CASE_ID`
 			}
 				while ($rowdf = mysql_fetch_array($failResults)) {
 					$inrow .= "<td>" . $rowdf['2011'] . "</td><td>Fail</td><td>$percentage</td>";
+					
 				}
 				$t = FALSE;
 			}
-
+	echo "Loading ...";
+	flush();
 		}
 		// table row
 		//int substr_count ( string $haystack , string $needle [, int $offset = 0 [, int $length ]] )
@@ -79,9 +81,50 @@ GROUP BY  `CASE_ID`
 	echo "Done ...";
 	flush();
 }
-?>
-<table border="1">
-	<?php
+
+require_once('tcpdf/config/lang/eng.php');
+require_once('tcpdf/tcpdf.php');
+
+// create new PDF document
+$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('Abdoulaye');
+$pdf->SetTitle('Case Study Country Comparison');
+$pdf->SetSubject('Case');
+$pdf->SetKeywords('Case, Study, Abdoulaye Camara, Harrisburg, University');
+
+// remove default header/footer
+$pdf->setPrintHeader(false);
+$pdf->setPrintFooter(false);
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+//set margins
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+
+//set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+//set image scale factor
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+//set some language-dependent strings
+$pdf->setLanguageArray($l);
+
+// ---------------------------------------------------------
+
+// set font
+$pdf->SetFont('times', 'BI', 20);
+
+// add a page
+$pdf->AddPage();
+
+// set some text to print
+$html ="<table border=\"1\">";
+
 	$query = "Select * from `CASE_FACTORS` WHERE  `CASE_ID` =  '$case'";
 	// now i need to list the first row as country factor name
 	$toprow = "<tr> <td>Country</td>";
@@ -91,8 +134,18 @@ GROUP BY  `CASE_ID`
 		// now to output the name of the factor and the three parts
 		$toprow .= "<td>" . $row['FACTOR_NAME'] . "</td><td>Result</td><td>Percentage</td>";
 	}
-	echo $toprow;
+	$html .= $toprow;
 	echo "\n<br />";
-	echo $tablerow;
+	$html .= $tablerow;
+
+$html .= "</table>";
+
+// print a block of text using Write()
+$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $html, $border=1, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=true);
+
+// ---------------------------------------------------------
+
+//Close and output PDF document
+$pdf->Output('example_002.pdf', 'I');
+
 ?>
-</table>
