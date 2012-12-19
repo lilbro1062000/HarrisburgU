@@ -12,12 +12,14 @@ WHERE  `CASE_ID` =  '$case'
 GROUP BY  `CASE_ID` 
 ");
 	// Open row
-	
-	$tablerow ="";
+
+	$tablerow = "";
 	$s = (1 / $sumofFactors) * $max;
 	$numofFactors = 0;
 	$getAllquery = "Select distinct Country_Name from COUNTRY_DATA";
 	$getAllresult = mysql_query($getAllquery);
+	echo "Loading ...";
+	flush();
 	while ($Countryrow = mysql_fetch_array($getAllresult)) {
 		$Country = addslashes(mysql_real_escape_string($Countryrow[0]));
 		$inrow = "";
@@ -51,13 +53,17 @@ GROUP BY  `CASE_ID`
 			while ($row = mysql_fetch_array($Conresults)) {
 				// this has passing factor could be the first one or the last one
 				$inrow .= "<td>" . $row['2011'] . "</td><td>Pass</td><td>$percentage</td>";
-				$t = TRUE;
+				$t = TRUE; // IT has passed 
 			}
 
 			if ($t != TRUE) {
-				$nquery ="Select * from COUNTRY_DATA WHERE COUTRY_DATA.Country_Name ='$Country' and Indicator_code =(select SeriesCode from indicators where `Indicator Name` = '" . addslashes(mysql_real_escape_string($caserow['FACTOR_NAME'])) . "'";
-				while ($rowdf = mysql_fetch_array($Conresults)) {
-				$inrow .= "<td>" . $rowdf['2011'] . "</td><td>Fail</td><td>$percentage</td>";
+				$nquery = "Select * from COUNTRY_DATA WHERE COUNTRY_DATA.Country_Name ='$Country' and Indicator_code =(select SeriesCode from indicators where `Indicator Name` = '" . addslashes(mysql_real_escape_string($caserow['FACTOR_NAME'])) . "')";
+				$failResults = mysql_query($nquery);
+				if (!$failResults) {
+				die($nquery . "<br/>Database has failed :" . mysql_error());
+			}
+				while ($rowdf = mysql_fetch_array($failResults)) {
+					$inrow .= "<td>" . $rowdf['2011'] . "</td><td>Fail</td><td>$percentage</td>";
 				}
 				$t = FALSE;
 			}
@@ -65,13 +71,14 @@ GROUP BY  `CASE_ID`
 		}
 		// table row
 		//int substr_count ( string $haystack , string $needle [, int $offset = 0 [, int $length ]] )
-		if (substr_count($inrow,"Fail")<3) {
+		//if (substr_count($inrow, "Fail") < 3) {
 			// something exists in this row
-			$tablerow.="<tr><td>" . $Country . "</td>".$inrow."</tr>\n";
-		}
+			$tablerow .= "<tr><td>" . $Country . "</td>" . $inrow . "</tr>\n";
+		//}
 	}
-
-
+	echo "Done ...";
+	flush();
+}
 ?>
 <table border="1">
 	<?php
@@ -82,8 +89,10 @@ GROUP BY  `CASE_ID`
 	$result = mysql_query($query);
 	while ($row = mysql_fetch_array($result)) {
 		// now to output the name of the factor and the three parts
-		$toprow .= "<td>" . $row['FACTOR_NAME'] . "</td>";
+		$toprow .= "<td>" . $row['FACTOR_NAME'] . "</td><td>Result</td><td>Percentage</td>";
 	}
-	}
+	echo $toprow;
+	echo "\n<br />";
+	echo $tablerow;
 ?>
 </table>
