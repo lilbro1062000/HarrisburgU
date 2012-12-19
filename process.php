@@ -82,46 +82,6 @@ GROUP BY  `CASE_ID`
 	flush();
 }
 
-require_once('tcpdf/config/lang/eng.php');
-require_once('tcpdf/tcpdf.php');
-
-// create new PDF document
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-// set document information
-$pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('Abdoulaye');
-$pdf->SetTitle('Case Study Country Comparison');
-$pdf->SetSubject('Case');
-$pdf->SetKeywords('Case, Study, Abdoulaye Camara, Harrisburg, University');
-
-// remove default header/footer
-$pdf->setPrintHeader(false);
-$pdf->setPrintFooter(false);
-
-// set default monospaced font
-$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-//set margins
-$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-
-//set auto page breaks
-$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
-//set image scale factor
-$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-//set some language-dependent strings
-$pdf->setLanguageArray($l);
-
-// ---------------------------------------------------------
-
-// set font
-$pdf->SetFont('times', 'BI', 20);
-
-// add a page
-$pdf->AddPage();
-
 // set some text to print
 $html ="<table border=\"1\">";
 
@@ -141,11 +101,10 @@ $html ="<table border=\"1\">";
 $html .= "</table>";
 
 // print a block of text using Write()
-$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $html, $border=1, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=true);
 
-// ---------------------------------------------------------
 
-//Close and output PDF document
-$pdf->Output('example_002.pdf', 'I');
-
+    require_once(dirname(__FILE__).'html2pdf.class.php');
+    $html2pdf = new HTML2PDF('P','A4','fr');
+    $html2pdf->WriteHTML($html);
+    $html2pdf->Output('file.pdf');
 ?>
