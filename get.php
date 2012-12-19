@@ -36,8 +36,21 @@ flush();
 
 }
 elseif(isset($_REQUEST['case']))
-	{
-		$query = " Select CASE_DESC from CASE_STUDIES where ID='".$_REQUEST['case']."'";
+	{$case=$_REQUEST['case'];
+		$query = " Select CASE_DESC from CASE_STUDIES where ID='$case'";
 		echo ex_query1RowAns($query);
+		// list the factor its importance and its value 
+		echo "Indicators/factors are";
+		echo "<table border=\"1\"> ";
+		$casequery= "Select * from `CASE_FACTORS` WHERE  `CASE_ID` =  '$case'";
+		// out put it as a table for people to see 
+		$caseresult = mysql_query($casequery);
+		echo "";
+		while ($caserow = mysql_fetch_array($caseresult)) {
+		echo "<tr><td>".$caserow['FACTOR_NAME']."</td><td>value: ".$caserow['FACTOR_VALUE']."</td><td> Importance: ".$caserow['IMPORTANCE']."</td></tr>";
+		}
+		echo "</table>";
 	}
 ?>
+
+	

@@ -1,5 +1,5 @@
 <?php
-require_once 'PHP/Head.php';
+require_once 'PHP/connection.php';
 set_time_limit(0);
 if (isset($_POST['Select'])) {
 
@@ -62,28 +62,34 @@ GROUP BY  `CASE_ID`
 				if (!$failResults) {
 				die($nquery . "<br/>Database has failed :" . mysql_error());
 			}
+			$notexist =TRUE;
 				while ($rowdf = mysql_fetch_array($failResults)) {
 					$inrow .= "<td>" . $rowdf['2011'] . "</td><td>Fail</td><td>$percentage</td>";
 					
+					$notexist= FALSE;
 				}
-				$t = FALSE;
+				if ($notexist==TRUE) {
+					$inrow .= "<td>NA</td><td>NA</td><td>NA</td>";
+				}
 			}
-	echo "Loading ...";
-	flush();
+	// echo "Loading ...";
+	// flush();
 		}
 		// table row
 		//int substr_count ( string $haystack , string $needle [, int $offset = 0 [, int $length ]] )
-		//if (substr_count($inrow, "Fail") < 3) {
+		if (substr_count($inrow, "Fail") < 3&&substr_count($inrow, "Na")<9) {
 			// something exists in this row
 			$tablerow .= "<tr><td>" . $Country . "</td>" . $inrow . "</tr>\n";
-		//}
+		}
 	}
-	echo "Done ...";
-	flush();
+	// echo "Done ...";
+	 flush();
 }
 
 // set some text to print
-$html ="<table border=\"1\">";
+$html ="<!DOCTYPE HTML>
+ <html><head>
+ </head><body><table border=\"1\">";
 
 	$query = "Select * from `CASE_FACTORS` WHERE  `CASE_ID` =  '$case'";
 	// now i need to list the first row as country factor name
@@ -95,16 +101,16 @@ $html ="<table border=\"1\">";
 		$toprow .= "<td>" . $row['FACTOR_NAME'] . "</td><td>Result</td><td>Percentage</td>";
 	}
 	$html .= $toprow;
-	echo "\n<br />";
+	//echo "\n<br />";
 	$html .= $tablerow;
 
-$html .= "</table>";
+$html .= "</table></body></html>";
 
 // print a block of text using Write()
-
-
-    require_once(dirname(__FILE__).'html2pdf.class.php');
-    $html2pdf = new HTML2PDF('P','A4','fr');
-    $html2pdf->WriteHTML($html);
-    $html2pdf->Output('file.pdf');
+// a link to the report something tangeble 
+echo $html;
+    // require_once('html2pdf.class.php');
+    // $html2pdf = new HTML2PDF('P','A4','fr');
+    // $html2pdf->WriteHTML($html);
+    // $html2pdf->Output('file.pdf');
 ?>
